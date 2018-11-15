@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %} This is index page {% end %}
+
+
+{% block content %}
+
+    {% for i in range(1, 5) %}
+
+    <img src="{{ static_url("images/{}.jpg".format(i)) }}" width="960px" height="450px" />
+    {% end %}
+
+
+{% end %}
