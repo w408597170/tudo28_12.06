@@ -5,10 +5,10 @@
 
 {% block content %}
 
-    {% for i in range(1, 5) %}
+i am index {{ datetime.datetime.now() }} <br />
+{% for n in names %}
+<img src="{{ n }}" />
 
-    <img src="{{ static_url("images/{}.jpg".format(i)) }}" width="960px" height="450px" />
-    {% end %}
-
+{% end %}
 
 {% end %}
