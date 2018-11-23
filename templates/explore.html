@@ -6,7 +6,10 @@
 {% block content %}
 
 
-    This is explore body
+    This is explore body <br />
+{% for n in names %}
+<img src="{{ n }}"  />
 
+{% end %}
 
 {% end %}
