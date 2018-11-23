@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %} Login page {% end %}
+
+{% block content %} I am login form <br />
+<form action="/login?next={{ nextname }}" enctype="multipart/form-data" method="post">
+    用户名:
+    <input type="text" name="username" required=""><br />
+    密&emsp;码:
+    <input type="password" name="password" required=""><br />
+    <button>登陆</button>
+    <div>
+        还没有帐号,需要<a href="/signup">注册</a>一个
+    </div>
+
+
+</form>
+
+{% end %}
