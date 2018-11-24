@@ -6,8 +6,8 @@
 {% block content %}
 
 i am index {{ datetime.datetime.now() }} <br />
-{% for n in names %}
-<img src="{{ n }}" />
+{% for p in posts %}
+<img src="{{ static_url(p.image_url) }}" />
 
 {% end %}
 

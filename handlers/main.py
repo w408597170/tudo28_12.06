@@ -4,6 +4,7 @@ import glob
 from pycket.session import SessionMixin
 
 from utils.photo import save_upload, make_thumb
+from utils.account import add_post_for, get_post_for, get_post
 
 
 class AuthBaseHandler(tornado.web.RequestHandler, SessionMixin):
@@ -23,8 +24,9 @@ class IndexHandler(AuthBaseHandler):
 
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
-        names = glob.glob('static/uploads/*.jpg')
-        self.render('index.html',names=names)
+        # names = glob.glob('static/uploads/*.jpg')
+        posts = get_post_for(self.current_user)
+        self.render('index.html',posts=posts)
 
 
 class ExploreHandler(AuthBaseHandler):
@@ -33,8 +35,9 @@ class ExploreHandler(AuthBaseHandler):
     """
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
-        names = glob.glob('static/uploads/thumbs/*.jpg')
-        self.render('explore.html',names=names)
+        # names = glob.glob('static/uploads/thumbs/*.jpg')
+        posts = get_post_for(self.current_user)
+        self.render('explore.html',posts=posts)
 
 
 class PostHandler(tornado.web.RequestHandler):
@@ -42,14 +45,24 @@ class PostHandler(tornado.web.RequestHandler):
     单个图片的详情页.
     """
     def get(self, *args, **kwargs):
-        self.render('post.html',post_id = kwargs['post_id'])
-        
 
-class UploadHandler(tornado.web.RequestHandler):
+        post = get_post(kwargs['post_id'])
+        if post:
+
+            # self.render('post.html',post_id = kwargs['post_id'])
+            self.render('post.html',post=post)
+        else:
+            self.write('post id {} is wrong'.format(kwargs['post_id']))
+
+class UploadHandler(AuthBaseHandler):
     '提供表单和和处理上传的图片.'
+
+
+    @tornado.web.authenticated  #验证用户是否登陆,如果没有提示登陆.
     def get(self,*args,**kwargs):
         self.render('upload.html')
 
+    @tornado.web.authenticated
     def post(self,*args,**kwargs):
         file_list = self.request.files.get('newimg', None)
         for upload in file_list:
@@ -57,6 +70,11 @@ class UploadHandler(tornado.web.RequestHandler):
             content = upload['body']
             # with open('static/uploads/{}'.format(name), 'wb') as f:
             #     f.write(content)
-            save_upload(name,content)
-            make_thumb(name,(200, 200))
+            image_url = save_upload(name,content)
+            thumb_url = make_thumb(name,(200, 200))
+
+            add_post_for(self.current_user, image_url, thumb_url)
+
+
+
         self.write('upload done')

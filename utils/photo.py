@@ -2,8 +2,16 @@ from PIL import Image
 import os
 
 def save_upload(name, content):
+    """
+    保存图片内容到文件.
+    :param name:
+    :param content:
+    :return:
+    """
     with open('static/uploads/{}'.format(name),'wb') as f:
         f.write(content)
+    return 'uploads/{}'.format(name)
+
 
 def make_thumb(name,size):
     """
@@ -18,6 +26,7 @@ def make_thumb(name,size):
     url = "uploads/thumbs/{}_{}x{}.jpg".format(file, size[0],size[1])
     im.save("static/{}".format(url), "JPEG")
 
+    return url
 
 # class UploadImageSave(object):
 #     """

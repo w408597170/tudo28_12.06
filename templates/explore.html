@@ -7,8 +7,8 @@
 
 
     This is explore body <br />
-{% for n in names %}
-<img src="{{ n }}"  />
+{% for p in posts %}
+<img src="{{ static_url(p.thumb_url) }}"  />
 
 {% end %}
 
