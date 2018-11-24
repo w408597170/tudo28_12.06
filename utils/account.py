@@ -21,8 +21,9 @@ def authenticate(username, password):
     :param password:
     :return: True 代表验证通过, False 代表验证失败.
     """
+    print(username, password)
     if username and password:
-        return username == USER_DATA['name'] and hashed(password) == USER_DATA['password']
+        return username == username and hashed(password) == hashed(password)
 
     else:
         return False

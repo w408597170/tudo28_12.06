@@ -1,34 +1,31 @@
-import tornado.web
-
-
-from pycket.session import SessionMixin
 
 from utils.account import authenticate, register
 from .main import AuthBaseHandler
 
-class LoginHandler(tornado.web.RequestHandler, SessionMixin):
+class LoginHandler(AuthBaseHandler):
     """
     登录接口
     """
     def get(self, *args, **kwargs):
-        next = self.get_argument('next', '/')
-        self.render('login.html',nextname = next) # 获取next并跳转路由.
+        next_url = self.get_argument('next', '/')
+        self.render('login.html',next_url = next_url) # 获取next并跳转路由.
 
     def post(self, *args, **kwargs):
         username = self.get_argument('username', None)
         password = self.get_argument('password', None)
-        next = self.get_argument('next', '/')   #路由跳转.
+        next_url = self.get_argument('next', '/')   #路由跳转.
         if authenticate(username, password):
             self.session.set('simon_user_info', username)
-            self.redirect(next)
+            self.redirect(next_url)
         else:
+            # print("---" + username,password)
             self.write('fail')
 
 
 class LogoutHandler(AuthBaseHandler):
     def get(self, *args, **kwargs):
         self.session.delete('simon_user_info')
-
+        self.write('logout ok')
 
 
 

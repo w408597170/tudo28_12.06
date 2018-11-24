@@ -5,7 +5,7 @@ from tornado.options import define,options
 
 from handlers import main, auth
 
-define('port',default=8083,help='run port',type=int)
+define('port',default=8080,help='run port',type=int)
 
 
 class Application(tornado.web.Application):
@@ -26,7 +26,7 @@ class Application(tornado.web.Application):
             pycket={
                 'engine': 'redis',
                 'storage': {
-                    'host': 'localhost',
+                    'host': '192.168.2.250',
                     'port': 6379,
                     # 'password': '',
                     'db_sessions': 5,  # redis db index
@@ -37,7 +37,7 @@ class Application(tornado.web.Application):
                     'expires_days': 30,
                 },
             },
-            cookie_secret = 'skldjfskljfksld;jf',
+            cookie_secret = 'sdlkmjinklsjdlfkj',
             login_url = '/login',
 
         )
