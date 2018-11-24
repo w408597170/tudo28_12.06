@@ -6,11 +6,11 @@ from models.account import User
 def hashed(text):
     return hashlib.md5(text.encode('utf8')).hexdigest()
 
-USER_DATA = {
-    "name": 'simon',
-    "password": hashed('123')
-
-}
+# USER_DATA = {
+#     "name": 'simon',
+#     "password": hashed('123')
+#
+# }
 
 
 
@@ -23,8 +23,9 @@ def authenticate(username, password):
     """
     print(username, password)
     if username and password:
-        return username == username and hashed(password) == hashed(password)
-
+        # return username == username and hashed(password) == hashed(password)
+        hashed_password = User.get_password(username)
+        return hashed(password) == hashed_password  #验证表单和数据库是否一样.
     else:
         return False
 

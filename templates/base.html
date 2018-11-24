@@ -5,6 +5,7 @@
     <title>{% block title %}tornado title {% end %}</title>
 </head>
 <body>
+    <div>当前用户: {{ current_user }}</div>
     {% block content %} this is base {% end %}
 </body>
 </html>

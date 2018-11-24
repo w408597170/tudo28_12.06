@@ -38,6 +38,13 @@ class User(Base):
         session.add(user)
         session.commit()
 
+    @classmethod
+    def get_password(cls,username):
+        user = session.query(User).filter_by(name=username).first()
+        if user:
+            return user.password
+        else:
+            return ''
 
 
 
