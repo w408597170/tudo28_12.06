@@ -35,7 +35,7 @@ class User(Base):
         :return:
         """
         user = User(name=username, password=password)
-
+ 
         session.add(user)
         session.commit()
 

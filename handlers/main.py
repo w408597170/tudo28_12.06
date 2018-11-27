@@ -1,10 +1,10 @@
 import tornado.web
-import glob
+# import glob
 
 from pycket.session import SessionMixin
 
-from utils.photo import save_upload, make_thumb
-from utils.account import add_post_for, get_post_for, get_post
+from utils.photo import  UploadImageSave
+from utils.account import add_post_for, get_post_for, get_post, get_all_post
 
 
 class AuthBaseHandler(tornado.web.RequestHandler, SessionMixin):
@@ -36,7 +36,7 @@ class ExploreHandler(AuthBaseHandler):
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
         # names = glob.glob('static/uploads/thumbs/*.jpg')
-        posts = get_post_for(self.current_user)
+        posts = get_all_post()
         self.render('explore.html',posts=posts)
 
 
@@ -65,16 +65,19 @@ class UploadHandler(AuthBaseHandler):
     @tornado.web.authenticated
     def post(self,*args,**kwargs):
         file_list = self.request.files.get('newimg', None)
+        post_id = 0
         for upload in file_list:
             name = upload['filename']
             content = upload['body']
             # with open('static/uploads/{}'.format(name), 'wb') as f:
             #     f.write(content)
-            image_url = save_upload(name,content)
-            thumb_url = make_thumb(name,(200, 200))
+            imgsave = UploadImageSave(self.settings['static_path'], name)
+            imgsave.save_upload(content)
+            imgsave.make_thumb()
 
-            add_post_for(self.current_user, image_url, thumb_url)
+            post = add_post_for(self.current_user, imgsave.image_url, imgsave.thumb_url)
+            post_id = post.id
 
 
 
-        self.write('upload done')
+        self.redirect('/post/{}'.format(post_id))   #上传完成后跳转到图片详情页.

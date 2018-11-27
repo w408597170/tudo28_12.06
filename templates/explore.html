@@ -6,9 +6,11 @@
 {% block content %}
 
 
-    This is explore body <br />
+    i am explore  <br />
 {% for p in posts %}
-<img src="{{ static_url(p.thumb_url) }}"  />
+<a href="/post/{{ p.id }}">
+    <img src="{{ static_url(p.thumb_url) }}"  />
+</a>
 
 {% end %}
 

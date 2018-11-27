@@ -57,6 +57,7 @@ def add_post_for(username, image_url, thumb_url):
     post = Post(image_url=image_url, thumb_url=thumb_url, user=user)
     session.add(post)
     session.commit()
+    return post
 
 def get_post_for(username):
     """
@@ -78,5 +79,9 @@ def get_post(post_id):
     """
     post = session.query(Post).filter_by(id=post_id).scalar()
     return post
+
+def get_all_post(): #获取所有缩略图.
+    posts = session.query(Post).order_by(Post.id.desc()).all()
+    return posts
 
 

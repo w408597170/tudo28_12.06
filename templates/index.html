@@ -4,11 +4,19 @@
 
 
 {% block content %}
-
+<div>当前用户: {{ current_user }}</div>
 i am index {{ datetime.datetime.now() }} <br />
-{% for p in posts %}
-<img src="{{ static_url(p.image_url) }}" />
 
-{% end %}
+
+
+    {% for p in posts %}
+    <a href="/post/{{ p.id }}">
+        <img src="{{ static_url(p.image_url) }}" />
+    </a>
+
+
+    {% end %}
+
+
 
 {% end %}
