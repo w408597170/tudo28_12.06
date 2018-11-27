@@ -1,12 +1,7 @@
 {% extends 'base.html' %}
 
-{% block title %} This is post page {% end %}
+{% block title %}Post detail page{% end %}
 
-
-{% block content %}
-<div>i am post upload by {{ post.user.name }}</div>
+{% block content %}i am post upload by {{ post.user.name }}<br>
 <img src="{{ static_url(post.image_url) }}"/>
-{#    <img src="{{ static_url("images/{}.jpg".format(post_id)) }}" width="960px" height="450px" />#}
-
-
 {% end %}

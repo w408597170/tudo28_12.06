@@ -1,22 +1,31 @@
 {% extends 'base.html' %}
 
-{% block title %} This is index page {% end %}
-
+{% block title %}Index page{% end %}
 
 {% block content %}
-<div>当前用户: {{ current_user }}</div>
-i am index {{ datetime.datetime.now() }} <br />
+<div class="row">
 
+    <div class="col col-md-8">
 
+        {% for p in posts %}
+        <a href="/post/{{ p.id }}">
+            <img src="{{ static_url(p.image_url) }}" class="img-fluid" width="560px"/>
+        </a>
+        {% end %}
 
-    {% for p in posts %}
-    <a href="/post/{{ p.id }}">
-        <img src="{{ static_url(p.image_url) }}" />
-    </a>
-
-
-    {% end %}
-
-
-
+    </div>
+    <div class="col-md-4 d-none d-md-block">
+        {% if current_user %}
+        <div class="card" style="width: 18rem;">
+            <img class="card-img-top" src="{{ static_url('images/favicon.jpg') }}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">当前用户：{{ current_user }}</h5>
+                <p class="card-text">This is my blog,welcome.</p>
+                <a href="#" class="btn btn-primary">关注</a>
+            </div>
+        </div>
+        i am index {{ datetime.datetime.now() }} <br/>
+        {% end %}
+    </div>
+</div>
 {% end %}
