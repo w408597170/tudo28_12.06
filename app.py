@@ -23,7 +23,7 @@ class Application(tornado.web.Application):
             (r'/room', chat.RoomHandler),
             (r'/ws', chat.ChatSocketHandler),
             (r'/sync', service.URLSaveHandler),
-            (r'/save', service.URLSaveHandler),
+            (r'/save', service.AsyncURLSaveHanlder),
         ]
         settings = dict(
             template_path = 'templates',    #设置模板路径.

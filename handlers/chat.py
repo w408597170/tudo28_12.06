@@ -56,18 +56,18 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler,SessionMixin):
         body = parsed['body']
         if body and body.startswith('http://'):
             client = tornado.httpclient.AsyncHTTPClient()
-            # save_api_url = "http://192.168.2.250:8080/save?save_url={}&user={}&from=room".format(body, self.current_user)
+            save_api_url = "http://192.168.2.250:8080/save?save_url={}&user={}&from=room".format(body, self.current_user)
 
-            resp = yield client.fetch(body)
-            ims = UploadImageSave(self.settings['static_path'], 'x.jpg')
-            ims.save_upload(resp.body)
-            ims.make_thumb()
-            post = add_post_for(self.current_user, ims.image_url, ims.thumb_url)
+            resp = yield client.fetch(save_api_url)
+            # ims = UploadImageSave(self.settings['static_path'], 'x.jpg')
+            # ims.save_upload(resp.body)
+            # ims.make_thumb()
+            # post = add_post_for(self.current_user, ims.image_url, ims.thumb_url)
 
-            # post_id = resp.body.decode('utf-8')
+            post_id = resp.body.decode('utf-8')
 
 
-            body = "http://192.168.2.250:8080/post/{}".format(post.id)
+            body = "http://192.168.2.250:8080/post/{}".format(post_id)
 
         chat = {
             'id':str(uuid.uuid4()),
