@@ -2,6 +2,10 @@
 
 {% block title %}Post detail page{% end %}
 
-{% block content %}i am post upload by {{ post.user.name }}<br>
+{% block content %} Upload by <a href="/profile?name={{ post.user.name }}" title="look at he's profile page"> {{ post.user.name }} </a>
+{% if like_count %}
+<i class="fa fa-heart text-danger" ></i> {{ like_count }}
+{% end %}
+<br />
 <img src="{{ static_url(post.image_url) }}"/>
 {% end %}

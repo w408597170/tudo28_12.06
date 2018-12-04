@@ -4,7 +4,7 @@ import tornado.web
 from pycket.session import SessionMixin
 
 from utils.photo import  UploadImageSave
-from utils.account import add_post_for, get_post_for, get_post, get_all_post
+from utils.account import add_post_for, get_post_for, get_post, get_all_post, get_user, get_like_posts, get_like_count
 
 
 class AuthBaseHandler(tornado.web.RequestHandler, SessionMixin):
@@ -48,9 +48,10 @@ class PostHandler(tornado.web.RequestHandler):
 
         post = get_post(kwargs['post_id'])
         if post:
+            like_count = get_like_count(post)
 
             # self.render('post.html',post_id = kwargs['post_id'])
-            self.render('post.html',post=post)
+            self.render('post.html',post=post, like_count=like_count)
         else:
             self.write('post id {} is wrong'.format(kwargs['post_id']))
 
@@ -81,3 +82,17 @@ class UploadHandler(AuthBaseHandler):
 
 
         self.redirect('/post/{}'.format(post_id))   #上传完成后跳转到图片详情页.
+
+
+class ProfileHandler(AuthBaseHandler):
+    """
+    用户信息页面.
+    """
+    def get(self, *args, **kwargs):
+        username = self.get_argument('name', '')
+        if not username:
+            username = self.current_user
+        user = get_user(username)
+
+        like_posts = get_like_posts(user)
+        self.render('profile.html', user=user, like_posts=like_posts)

@@ -63,6 +63,15 @@ class Post(Base):
 
 
 
+class Like(Base):
+    """
+    记录用户喜欢的图片.
+    """
+    __tablename__ = 'likes'
+
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, primary_key=True)
+    post_id = Column(Integer, ForeignKey('img_url.id'), nullable=False, primary_key=True)
+
 
 
 

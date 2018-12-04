@@ -1,7 +1,7 @@
 
 import hashlib
 
-from models.account import User, session, Post
+from models.account import User, session, Post, Like
 
 def hashed(text):
     return hashlib.md5(text.encode('utf8')).hexdigest()
@@ -84,4 +84,22 @@ def get_all_post(): #获取所有缩略图.
     posts = session.query(Post).order_by(Post.id.desc()).all()
     return posts
 
+def get_user(username):
+    user = session.query(User).filter_by(name=username).first()
+    return user
 
+
+def get_like_posts(user):   #获取用户喜欢的图片.
+    if user:
+
+        posts = session.query(Post).filter(Like.user_id == user.id,
+                                       Post.id == Like.post_id,Post.id != user.id).all()
+    else:
+        posts = []
+
+    return posts
+
+
+def get_like_count(post):   #获取喜欢一张图片的用户数.
+    count = session.query(Like).filter_by(post_id=post.id).count()
+    return count

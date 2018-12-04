@@ -3,7 +3,8 @@ import tornado.web  #web服务器
 import tornado.options  #命令行解析模块,让模块定义自己的选项.
 from tornado.options import define,options
 
-from handlers import main, auth
+
+from handlers import main, auth, chat, service
 
 define('port',default=8080,help='run port',type=int)
 
@@ -15,9 +16,14 @@ class Application(tornado.web.Application):
             (r'/explore', main.ExploreHandler),
             (r'/post/(?P<post_id>[0-9]+)', main.PostHandler),
             (r'/upload', main.UploadHandler),
+            (r'/profile', main.ProfileHandler),
             (r'/login', auth.LoginHandler),
             (r'/logout', auth.LogoutHandler),
             (r'/signup', auth.SignupHandler),
+            (r'/room', chat.RoomHandler),
+            (r'/ws', chat.ChatSocketHandler),
+            (r'/sync', service.URLSaveHandler),
+            (r'/save', service.URLSaveHandler),
         ]
         settings = dict(
             template_path = 'templates',    #设置模板路径.
