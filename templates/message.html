@@ -1,1 +1,28 @@
-<div class="message" id="m{{ message["id"] }}">{{ user }} :&emsp;{% module linkify(message["body"]) %}</div>
+<div class="message" id="m{{ message["id"] }}">
+
+    {% if message['user']=='system' %}
+    <font face="verdana" color="red">{{ message['user'] }}:&emsp;{% module linkify(message["body"]) %}</font>
+    {% else %}
+    {{ message['user'] }} :&emsp;{% module linkify(message["body"]) %}
+    {% end %}
+
+
+    {% if message["img_url"] %}
+    <br />
+    <a href={{ static_url(message["img_url"]) }} target="_blank">
+        <img src="{{ static_url(message['img_url']) }}"/>
+    </a>
+    {% end %}
+
+</div>
+
+
+<!--
+<div class="message" id="m{{ message["id"] }}">{{ message['user'] }} :&emsp;{% module linkify(message["body"]) %}
+    {% if message["img_url"] %}
+    <br />
+    <img src="{{ static_url(message['img_url']) }}"/>
+    {% end %}
+
+</div>
+-->

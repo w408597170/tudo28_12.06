@@ -1,12 +1,14 @@
 import tornado.web
 import tornado.gen
+import tornado.escape
 from tornado.httpclient import AsyncHTTPClient
 import requests
+
 
 from utils.account import add_post_for
 from .main import AuthBaseHandler
 from utils.photo import UploadImageSave
-
+from .chat import ChatSocketHandler, make_chat
 
 class URLSaveHandler(AuthBaseHandler):
     """
@@ -45,5 +47,14 @@ class AsyncURLSaveHanlder(AuthBaseHandler):
         ims.make_thumb()
 
         post = add_post_for(user, ims.image_url, ims.thumb_url)
+        chat = make_chat('{} post new image:http://192.168.2.250:8080/post/{} '.format(user, post.id),img_url=post.thumb_url)
+        # self.write(str(post.id))
+        msg = {
+            'html':tornado.escape.to_basestring(
+                self.render_string('message.html', message=chat,)
+            ),
+            'id':chat['id'],
+        }
 
-        self.write(str(post.id))
+        ChatSocketHandler.update_history(msg)
+        ChatSocketHandler.send_updates(msg)

@@ -6,10 +6,24 @@ import tornado.web
 import tornado.httpclient
 import tornado.gen
 from pycket.session import SessionMixin
+from tornado.ioloop import IOLoop
 
 from .main import AuthBaseHandler
 from utils.account import add_post_for
 from utils.photo import UploadImageSave
+
+
+def make_chat(msg_body, name='system', img_url=None):
+    """生成一个用来格式化 message.html 模板的 dict"""
+    ret = {
+        'id':str(uuid.uuid4()),
+        'body':msg_body,
+        'user':name,
+        'img_url':img_url,
+    }
+
+    return ret
+
 
 class RoomHandler(AuthBaseHandler):
     """
@@ -47,7 +61,7 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler,SessionMixin):
          print("close ws connection: %s" % self)
          ChatSocketHandler.waiters.remove(self)
 
-    @tornado.gen.coroutine
+    # @tornado.gen.coroutine
     def on_message(self, message):
         """websocket 服务端接收到消息,自动调用"""
 
@@ -57,32 +71,43 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler,SessionMixin):
         if body and body.startswith('http://'):
             client = tornado.httpclient.AsyncHTTPClient()
             save_api_url = "http://192.168.2.250:8080/save?save_url={}&user={}&from=room".format(body, self.current_user)
-
-            resp = yield client.fetch(save_api_url)
+            IOLoop.current().spawn_callback(client.fetch, save_api_url)
+            # resp = yield client.fetch(save_api_url)
             # ims = UploadImageSave(self.settings['static_path'], 'x.jpg')
             # ims.save_upload(resp.body)
             # ims.make_thumb()
             # post = add_post_for(self.current_user, ims.image_url, ims.thumb_url)
 
-            post_id = resp.body.decode('utf-8')
+            # post_id = resp.body.decode('utf-8')
+            # body = "http://192.168.2.250:8080/post/{}".format(post_id)
+            body = "user {}, url {} is processing".format(self.current_user, body)
+            chat = make_chat(body)
 
+        # chat = {
+        #     'id':str(uuid.uuid4()),
+        #     'body':body,
+        #     'user':self.current_user
+        # }
 
-            body = "http://192.168.2.250:8080/post/{}".format(post_id)
+            msg = {
+                'html':tornado.escape.to_basestring(
+                    self.render_string('message.html', message=chat,)
+                ),
+                'id':chat['id'],
+            }
+            self.write_message(msg)
 
-        chat = {
-            'id':str(uuid.uuid4()),
-            'body':body,
-        }
+        else:
+            chat = make_chat(body, self.current_user)
+            msg = {
+                'html': tornado.escape.to_basestring(
+                    self.render_string('message.html', message=chat,)
+                ),
+                'id': chat['id'],
+            }
 
-        msg = {
-            'html':tornado.escape.to_basestring(
-                self.render_string('message.html', message=chat,user=self.current_user)
-            ),
-            'id':chat['id']
-        }
-
-        ChatSocketHandler.update_history(msg)
-        ChatSocketHandler.send_updates(msg)
+            ChatSocketHandler.update_history(msg)
+            ChatSocketHandler.send_updates(msg)
 
     @classmethod
     def send_updates(cls,msg):
@@ -97,4 +122,4 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler,SessionMixin):
         """更新消息列表,加入新的(历史)消息"""
         cls.history.append(msg)
         if len(cls.history) > cls.history_size:
-            cls.history = cls.history[-cls.history_size]
+            cls.history = cls.history[-cls.history_size:]
